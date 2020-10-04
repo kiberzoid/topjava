@@ -36,14 +36,6 @@ public class SimpleMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Meal createMeal(LocalDateTime dateTime, String description, int calories) {
-        int id = countMeals.getAndIncrement();
-        Meal meal = new Meal(dateTime, description, calories, id);
-        meals.putIfAbsent(id, meal);
-        return meal;
-    }
-
-    @Override
     public Meal createOrUpdateMeal(Meal meal) {
         if (!meals.containsKey(meal.getId())) {
             int id = countMeals.getAndIncrement();
