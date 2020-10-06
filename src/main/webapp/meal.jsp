@@ -11,16 +11,16 @@
 <hr>
 <form method="POST" action='meals' name="editMeal">
     <input hidden type="text" readonly="readonly" name="id"
-           value="<c:out value="${meal.id}" />"/> <br/>
+           value="${meal.id}" /> <br/>
     DateTime : <input
-        type="text" name="dateTime"
-        value="<c:out value="${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}" />"/> <br/>
+        type="datetime-local" name="dateTime"
+        value="${meal.dateTime}" /> <br/>
     Description : <input
         type="text" name="description"
-        value="<c:out value="${meal.description}" />"/> <br/>
+        value="${meal.description}" /> <br/>
     Calories : <input
-        type="text" name="calories"
-        value="<c:out value="${meal.calories}" />"/> <br/>
+        type="number" min="1" name="calories"
+        value="${meal.calories}" /> <br/>
     <input type="submit" value="Submit"/>
 </form>
 </body>

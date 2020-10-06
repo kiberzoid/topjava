@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.filter;
+package ru.javawebinar.topjava.web;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

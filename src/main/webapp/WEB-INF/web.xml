@@ -15,7 +15,7 @@
 
     <filter>
         <filter-name>CharacterSetFilter</filter-name>
-        <filter-class>ru.javawebinar.topjava.filter.CharSetFilter</filter-class>
+        <filter-class>ru.javawebinar.topjava.web.CharSetFilter</filter-class>
     </filter>
 
     <filter-mapping>

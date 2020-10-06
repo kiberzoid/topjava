@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.dao.MealRepository;
-import ru.javawebinar.topjava.dao.SimpleMealRepositoryImpl;
+import ru.javawebinar.topjava.dao.MemoryInMealRepositoryImpl;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -13,56 +13,69 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class MealServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(MealServlet.class);
-    private static final MealRepository repo = new SimpleMealRepositoryImpl();
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final Logger LOGGER = LoggerFactory.getLogger(MealServlet.class);
+    private final MealRepository repo = new MemoryInMealRepositoryImpl();
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private static final String INSERT_OR_EDIT = "/meal.jsp";
     private static final String LIST_MEAL = "/meals.jsp";
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("processing POST request");
+        LOGGER.info("processing POST request");
         LocalDateTime ldt = LocalDateTime.from(formatter.parse(request.getParameter("dateTime")));
         String desc = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
-        int mealId = 0;
-        if (request.getParameter("id").equals("")) {
+        if (request.getParameter("id") != null && !request.getParameter("id").equals("")) {
+            LOGGER.info("update meal");
+            int mealId = Integer.parseInt(request.getParameter("id"));
+            Meal meal = new Meal(mealId, ldt, desc, calories);
+            repo.updateMeal(meal);
         } else {
-            mealId = Integer.parseInt(request.getParameter("id"));
+            LOGGER.info("create meal");
+            repo.createMeal(ldt, desc, calories);
         }
-        logger.info("create or update meal");
-        Meal meal = new Meal(ldt, desc, calories, mealId);
-        repo.createOrUpdateMeal(meal);
-        request.setAttribute("meals", MealsUtil.createMealToList(repo.getMeals(), 2000));
-        request.getRequestDispatcher(LIST_MEAL).forward(request, response);
+        response.sendRedirect("meals");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("processing GET request");
-        String forward = "";
+        LOGGER.info("processing GET request");
         String action = request.getParameter("action");
-        if (action.equalsIgnoreCase("delete")) {
-            int mealId = Integer.parseInt(request.getParameter("mealId"));
-            logger.info("try to delete meal with id: " + mealId);
-            repo.deleteMeal(mealId);
-            forward = LIST_MEAL;
-            request.setAttribute("meals", MealsUtil.createMealToList(repo.getMeals(), 2000));
-        } else if (action.equalsIgnoreCase("edit")) {
-            forward = INSERT_OR_EDIT;
-            int mealId = Integer.parseInt(request.getParameter("mealId"));
-            logger.info("try to edit meal with id: " + mealId);
-            Meal meal = repo.getMeal(mealId);
-            request.setAttribute("meal", meal);
-        } else if (action.equalsIgnoreCase("viewMeals")) {
-            logger.info("try to view meals");
-            forward = LIST_MEAL;
-            request.setAttribute("meals", MealsUtil.createMealToList(repo.getMeals(), 2000));
-        } else {
-            logger.info("try to create new meal");
-            forward = INSERT_OR_EDIT;
+        if (action == null) {
+            LOGGER.info("try to view meals");
+            request.setAttribute("meals",
+                    MealsUtil.filteredByStreams(repo.getMeals(), LocalTime.of(0, 0), LocalTime.of(23, 59), 2000));
+            request.getRequestDispatcher(LIST_MEAL).forward(request, response);
+            return;
         }
-        request.getRequestDispatcher(forward).forward(request, response);
+        switch (action) {
+            case "delete": {
+                int mealId = Integer.parseInt(request.getParameter("mealId"));
+                LOGGER.info("try to delete meal with id: " + mealId);
+                repo.deleteMeal(mealId);
+                response.sendRedirect("meals");
+                break;
+            }
+            case "edit": {
+                int mealId = Integer.parseInt(request.getParameter("mealId"));
+                LOGGER.info("try to edit meal with id: " + mealId);
+                Meal meal = repo.getMeal(mealId);
+                request.setAttribute("meal", meal);
+                request.getRequestDispatcher(INSERT_OR_EDIT).forward(request, response);
+                break;
+            }
+            case "create": {
+                LOGGER.info("try to create new meal");
+                request.getRequestDispatcher(INSERT_OR_EDIT).forward(request, response);
+            }
+            default: {
+                LOGGER.info("try to view meals");
+                request.setAttribute("meals",
+                        MealsUtil.filteredByStreams(repo.getMeals(), LocalTime.of(0, 0), LocalTime.of(23, 59), 2000));
+                request.getRequestDispatcher(LIST_MEAL).forward(request, response);
+            }
+        }
     }
 }

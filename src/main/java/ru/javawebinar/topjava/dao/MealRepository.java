@@ -6,9 +6,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface MealRepository {
-    public List<Meal> getMeals();
-    public Meal getMeal(int id);
-    public Meal createOrUpdateMeal(Meal meal);
-    public int deleteMeal(int id);
+    List<Meal> getMeals();
+
+    Meal getMeal(int id);
+
+    Meal createMeal(LocalDateTime dateTime, String description, int calories);
+
+    Meal updateMeal(Meal meal);
+
+    int deleteMeal(int id);
 }
 
