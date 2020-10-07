@@ -7,12 +7,12 @@ import java.util.List;
 public interface MealRepository {
     List<Meal> getMeals();
 
-    Meal getMeal(int id);
+    Meal get(int id);
 
-    Meal createMeal(Meal meal);
+    Meal create(Meal meal);
 
-    Meal updateMeal(Meal meal);
+    Meal update(Meal meal);
 
-    boolean deleteMeal(int id);
+    boolean delete(int id);
 }
 
