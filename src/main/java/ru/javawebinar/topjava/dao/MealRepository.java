@@ -10,10 +10,10 @@ public interface MealRepository {
 
     Meal getMeal(int id);
 
-    Meal createMeal(LocalDateTime dateTime, String description, int calories);
+    Meal createMeal(Meal meal);
 
     Meal updateMeal(Meal meal);
 
-    int deleteMeal(int id);
+    boolean deleteMeal(int id);
 }
 
