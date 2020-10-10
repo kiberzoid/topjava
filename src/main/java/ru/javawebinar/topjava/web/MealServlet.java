@@ -2,10 +2,10 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
-import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -13,19 +13,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
-    private MealRepository repository;
+    private MealRestController controller;
+    private ConfigurableApplicationContext ctx;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        repository = new InMemoryMealRepository();
+        log.info("init MealServlet");
+        ctx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        log.info("App beans: {}", Arrays.deepToString(ctx.getBeanDefinitionNames()));
+        controller = ctx.getBean(MealRestController.class);
     }
 
     @Override
@@ -39,7 +46,11 @@ public class MealServlet extends HttpServlet {
                 Integer.parseInt(request.getParameter("calories")));
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        repository.save(meal);
+        if (meal.isNew()) {
+            controller.create(meal);
+        } else {
+            controller.update(meal, Integer.parseInt(id));
+        }
         response.sendRedirect("meals");
     }
 
@@ -48,17 +59,43 @@ public class MealServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         switch (action == null ? "all" : action) {
+            case "filter":
+                LocalDate dFrom = LocalDate.MIN;
+                LocalDate dTo = LocalDate.MAX;
+                LocalTime tFrom = LocalTime.MIN;
+                LocalTime tTo = LocalTime.MAX;
+                String dateFrom = request.getParameter("dateFrom");
+                String dateTo = request.getParameter("dateTo");
+                String timeFrom = request.getParameter("timeFrom");
+                String timeTo = request.getParameter("timeTo");
+                if (dateFrom != null && !dateFrom.isEmpty()) {
+                    dFrom = LocalDate.parse(dateFrom);
+                }
+                if (dateTo != null && !dateTo.isEmpty()) {
+                    dTo = LocalDate.parse(dateTo);
+                }
+                if (timeFrom != null && !timeFrom.isEmpty()) {
+                    tFrom = LocalTime.parse(timeFrom);
+                }
+                if (timeTo != null && !timeTo.isEmpty()) {
+                    tTo = LocalTime.parse(timeTo);
+                }
+                log.info("Get meals for period [dateFrom: {}, dateTo: {}], [timeFrom: {}, timeTo: {}]",
+                        dateFrom, dateTo, timeFrom, timeTo);
+                request.setAttribute("meals",
+                        controller.getAllFiltered(dFrom, dTo, tFrom, tTo));
+                request.getRequestDispatcher("/meals.jsp").forward(request, response);
             case "delete":
                 int id = getId(request);
                 log.info("Delete {}", id);
-                repository.delete(id);
+                controller.delete(id);
                 response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                        repository.get(getId(request));
+                        controller.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
@@ -66,10 +103,15 @@ public class MealServlet extends HttpServlet {
             default:
                 log.info("getAll");
                 request.setAttribute("meals",
-                        MealsUtil.getTos(repository.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY));
+                        controller.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
+    }
+
+    @Override
+    public void destroy() {
+        ctx.close();
     }
 
     private int getId(HttpServletRequest request) {
