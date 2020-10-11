@@ -23,22 +23,22 @@
     <h2>Meals</h2>
     <div>
         <form action="meals">
-            <input type="hidden" name="action" value="filter" />
+            <input type="hidden" name="action" value="filter"/>
             <dl>
                 <dt>Date From:</dt>
-                <dd><input type="date" name="dateFrom"></dd>
+                <dd><input type="date" name="dateFrom" value="${param.dateFrom}"></dd>
             </dl>
             <dl>
                 <dt>Date To:</dt>
-                <dd><input type="date" name="dateTo"></dd>
+                <dd><input type="date" name="dateTo" value="${param.dateTo}"></dd>
             </dl>
             <dl>
                 <dt>Time From:</dt>
-                <dd><input type="time" name="timeFrom"></dd>
+                <dd><input type="time" name="timeFrom" value="${param.timeFrom}"></dd>
             </dl>
             <dl>
                 <dt>Time To:</dt>
-                <dd><input type="time" name="timeTo"></dd>
+                <dd><input type="time" name="timeTo" value="${param.timeTo}"></dd>
             </dl>
             <button type="submit">Filter</button>
         </form>

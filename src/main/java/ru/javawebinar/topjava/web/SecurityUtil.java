@@ -9,7 +9,7 @@ public class SecurityUtil {
         return authUserId;
     }
 
-    public static void setAuthUserId(Integer userId) {
+    public static void setAuthUserId(int userId) {
         authUserId = userId;
     }
 

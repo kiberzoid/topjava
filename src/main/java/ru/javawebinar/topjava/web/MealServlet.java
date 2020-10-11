@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.StringUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -17,7 +18,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
@@ -31,7 +31,6 @@ public class MealServlet extends HttpServlet {
         super.init(config);
         log.info("init MealServlet");
         ctx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
-        log.info("App beans: {}", Arrays.deepToString(ctx.getBeanDefinitionNames()));
         controller = ctx.getBean(MealRestController.class);
     }
 
@@ -49,7 +48,7 @@ public class MealServlet extends HttpServlet {
         if (meal.isNew()) {
             controller.create(meal);
         } else {
-            controller.update(meal, Integer.parseInt(id));
+            controller.update(meal, getId(request));
         }
         response.sendRedirect("meals");
     }
@@ -60,26 +59,14 @@ public class MealServlet extends HttpServlet {
 
         switch (action == null ? "all" : action) {
             case "filter":
-                LocalDate dFrom = LocalDate.MIN;
-                LocalDate dTo = LocalDate.MAX;
-                LocalTime tFrom = LocalTime.MIN;
-                LocalTime tTo = LocalTime.MAX;
                 String dateFrom = request.getParameter("dateFrom");
                 String dateTo = request.getParameter("dateTo");
                 String timeFrom = request.getParameter("timeFrom");
                 String timeTo = request.getParameter("timeTo");
-                if (dateFrom != null && !dateFrom.isEmpty()) {
-                    dFrom = LocalDate.parse(dateFrom);
-                }
-                if (dateTo != null && !dateTo.isEmpty()) {
-                    dTo = LocalDate.parse(dateTo);
-                }
-                if (timeFrom != null && !timeFrom.isEmpty()) {
-                    tFrom = LocalTime.parse(timeFrom);
-                }
-                if (timeTo != null && !timeTo.isEmpty()) {
-                    tTo = LocalTime.parse(timeTo);
-                }
+                LocalDate dFrom = !StringUtils.isEmpty(dateFrom) ? LocalDate.parse(dateFrom) : null;
+                LocalDate dTo = !StringUtils.isEmpty(dateTo) ? LocalDate.parse(dateTo) : null;
+                LocalTime tFrom = !StringUtils.isEmpty(timeFrom) ? LocalTime.parse(timeFrom) : null;
+                LocalTime tTo = !StringUtils.isEmpty(timeTo) ? LocalTime.parse(timeTo) : null;
                 log.info("Get meals for period [dateFrom: {}, dateTo: {}], [timeFrom: {}, timeTo: {}]",
                         dateFrom, dateTo, timeFrom, timeTo);
                 request.setAttribute("meals",
