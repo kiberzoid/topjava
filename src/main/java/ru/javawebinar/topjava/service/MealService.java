@@ -44,9 +44,8 @@ public class MealService {
     }
 
     public List<MealTo> getAllFiltered(int userId, LocalDate dFrom, LocalDate dTo, LocalTime tFrom, LocalTime tTo, int caloriesPerDate) {
-        List<MealTo> mealTos = MealsUtil.getTos(repository.getAll(userId), caloriesPerDate);
+        List<MealTo> mealTos = MealsUtil.getTos(repository.getAllFilteredByDate(userId, dFrom, dTo), caloriesPerDate);
         return mealTos.stream()
-                .filter(mealTo -> (DateTimeUtil.isBetweenOpen(mealTo.getDate(), dFrom, dTo)))
                 .filter(mealTo -> (DateTimeUtil.isBetweenHalfOpen(mealTo.getTime(), tFrom, tTo)))
                 .sorted(Comparator.comparing(MealTo::getDate).reversed().thenComparing(MealTo::getTime).reversed())
                 .collect(Collectors.toList());

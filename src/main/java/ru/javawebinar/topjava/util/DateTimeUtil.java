@@ -10,7 +10,7 @@ public class DateTimeUtil {
         return checkedVal.compareTo(startVal) >= 0 && checkedVal.compareTo(endVal) < 0;
     }
 
-    public static <T extends Comparable<T>> boolean isBetweenOpen(T checkedVal, T startVal, T endVal) {
+    public static <T extends Comparable<T>> boolean isBetweenClosed(T checkedVal, T startVal, T endVal) {
         return checkedVal.compareTo(startVal) >= 0 && checkedVal.compareTo(endVal) <= 0;
     }
 

@@ -39,7 +39,7 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+        Meal meal = new Meal(StringUtils.isEmpty(id) ? null : Integer.valueOf(id),
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
@@ -63,10 +63,10 @@ public class MealServlet extends HttpServlet {
                 String dateTo = request.getParameter("dateTo");
                 String timeFrom = request.getParameter("timeFrom");
                 String timeTo = request.getParameter("timeTo");
-                LocalDate dFrom = !StringUtils.isEmpty(dateFrom) ? LocalDate.parse(dateFrom) : null;
-                LocalDate dTo = !StringUtils.isEmpty(dateTo) ? LocalDate.parse(dateTo) : null;
-                LocalTime tFrom = !StringUtils.isEmpty(timeFrom) ? LocalTime.parse(timeFrom) : null;
-                LocalTime tTo = !StringUtils.isEmpty(timeTo) ? LocalTime.parse(timeTo) : null;
+                LocalDate dFrom = getLocalDate(dateFrom);
+                LocalDate dTo = getLocalDate(dateTo);
+                LocalTime tFrom = getLocalTime(timeFrom);
+                LocalTime tTo = getLocalTime(timeTo);
                 log.info("Get meals for period [dateFrom: {}, dateTo: {}], [timeFrom: {}, timeTo: {}]",
                         dateFrom, dateTo, timeFrom, timeTo);
                 request.setAttribute("meals",
@@ -104,5 +104,13 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
+    }
+
+    private LocalDate getLocalDate(String date) {
+        return !StringUtils.isEmpty(date) ? LocalDate.parse(date) : null;
+    }
+
+    private LocalTime getLocalTime(String time) {
+        return !StringUtils.isEmpty(time) ? LocalTime.parse(time) : null;
     }
 }
