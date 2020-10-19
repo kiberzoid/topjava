@@ -64,8 +64,8 @@ public class UserServiceTest {
 
     @Test
     public void get() throws Exception {
-        User user = service.get(USER_ID);
-        assertMatch(user, user);
+        User actualUser = service.get(USER_ID);
+        assertMatch(actualUser, user);
     }
 
     @Test
