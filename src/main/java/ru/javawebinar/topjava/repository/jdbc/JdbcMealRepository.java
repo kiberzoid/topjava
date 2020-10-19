@@ -24,11 +24,11 @@ public class JdbcMealRepository implements MealRepository {
 
     private final SimpleJdbcInsert insertUser;
 
-    public JdbcMealRepository(JdbcOperations jdbcOperations, NamedParameterJdbcOperations namedParameterJdbcOperations) {
-        this.insertUser = new SimpleJdbcInsert((JdbcTemplate) jdbcOperations)
+    public JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcOperations namedParameterJdbcOperations) {
+        this.insertUser = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meals")
                 .usingGeneratedKeyColumns("id");
-        this.jdbcOperations = jdbcOperations;
+        this.jdbcOperations = jdbcTemplate;
         this.namedParameterJdbcOperations = namedParameterJdbcOperations;
     }
 
