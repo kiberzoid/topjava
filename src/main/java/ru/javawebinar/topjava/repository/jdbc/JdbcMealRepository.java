@@ -3,9 +3,10 @@ package ru.javawebinar.topjava.repository.jdbc;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsertOperations;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -21,10 +22,10 @@ public class JdbcMealRepository implements MealRepository {
 
     private final NamedParameterJdbcOperations namedParameterJdbcOperations;
 
-    private final SimpleJdbcInsertOperations insertUser;
+    private final SimpleJdbcInsert insertUser;
 
-    public JdbcMealRepository(JdbcOperations jdbcOperations, NamedParameterJdbcOperations namedParameterJdbcOperations, SimpleJdbcInsertOperations insertUser) {
-        this.insertUser = insertUser
+    public JdbcMealRepository(JdbcOperations jdbcOperations, NamedParameterJdbcOperations namedParameterJdbcOperations) {
+        this.insertUser = new SimpleJdbcInsert((JdbcTemplate) jdbcOperations)
                 .withTableName("meals")
                 .usingGeneratedKeyColumns("id");
         this.jdbcOperations = jdbcOperations;
