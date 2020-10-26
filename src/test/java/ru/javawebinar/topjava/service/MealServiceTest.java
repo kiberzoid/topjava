@@ -3,6 +3,8 @@ package ru.javawebinar.topjava.service;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StopWatch;
-import ru.javawebinar.topjava.EachTestTimeWatcher;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -32,16 +33,31 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-    private static final Logger logger
-            = LoggerFactory.getLogger(MealServiceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(MealServiceTest.class);
+
+    private static StopWatch stopWatch = new StopWatch(MealServiceTest.class.getName());
 
     @Autowired
     private MealService service;
 
-    private static StopWatch stopWatch = new StopWatch(MealServiceTest.class.getName());
-
     @Rule
-    public EachTestTimeWatcher eachTestTimeWatcher = new EachTestTimeWatcher(stopWatch);
+    public TestWatcher eachTestTimeWatcher = new TestWatcher() {
+        @Override
+        protected void starting(Description description) {
+            stopWatch.start(description.getMethodName());
+        }
+
+        @Override
+        protected void finished(Description description) {
+            stopWatch.stop();
+            logger.info("Test {} - {} milliseconds", description.getMethodName(), stopWatch.getLastTaskTimeMillis());
+        }
+    };
+
+    @AfterClass
+    public static void printAllTestTime() {
+        logger.info(stopWatch.prettyPrint());
+    }
 
     @Test
     public void delete() throws Exception {
@@ -120,10 +136,5 @@ public class MealServiceTest {
     @Test
     public void getBetweenWithNullDates() throws Exception {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
-    }
-
-    @AfterClass
-    public static void printAllTestTime() {
-        logger.info(stopWatch.prettyPrint());
     }
 }
