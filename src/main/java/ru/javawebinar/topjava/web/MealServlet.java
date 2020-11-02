@@ -27,6 +27,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void init() {
+
         springContext = new ClassPathXmlApplicationContext("spring/spring-app.xml", "spring/spring-db.xml");
         mealController = springContext.getBean(MealRestController.class);
     }
@@ -45,7 +46,7 @@ public class MealServlet extends HttpServlet {
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
 
-        if (StringUtils.isEmpty(request.getParameter("id"))) {
+        if (StringUtils.hasLength(request.getParameter("id"))) {
             mealController.create(meal);
         } else {
             mealController.update(meal, getId(request));
