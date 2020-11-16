@@ -33,7 +33,7 @@ public class JdbcUserRepository implements UserRepository {
             User user = map.putIfAbsent(id, new User(id, rs.getString("name"), rs.getString("email"),
                     rs.getString("password"), rs.getInt("calories_per_day"),
                     rs.getBoolean("enabled"), rs.getDate("registered"),
-                    Collections.EMPTY_SET));
+                    Collections.emptySet()));
             if(user == null){
                 user = map.get(id);
             }
@@ -41,7 +41,6 @@ public class JdbcUserRepository implements UserRepository {
             if(role != null) {
                 Set<Role> roles = user.getRoles();
                 roles.add(Role.valueOf(role));
-                user.setRoles(roles);
             }
         }
         return List.copyOf(map.values());
