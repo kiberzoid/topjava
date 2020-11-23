@@ -49,6 +49,25 @@ public class MealTo {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        MealTo other = (MealTo) o;
+        return other.getId().equals(this.id) &&
+               other.getDateTime().compareTo(this.dateTime) == 0 &&
+               other.getDescription().equals(this.description) &&
+               other.getCalories() == this.calories &&
+               other.isExcess() == this.excess;
+    }
+
+    @Override
     public String toString() {
         return "MealTo{" +
                 "id=" + id +
