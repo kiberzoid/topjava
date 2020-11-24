@@ -54,18 +54,18 @@ public class MealTo {
         if (o == null) {
             return false;
         }
-        if (getClass() != o.getClass()) {
-            return false;
-        }
         if (this == o) {
             return true;
         }
+        if (getClass() != o.getClass()) {
+            return false;
+        }
         MealTo other = (MealTo) o;
-        return other.getId().equals(this.id) &&
-                other.getDateTime().compareTo(this.dateTime) == 0 &&
-                other.getDescription().equals(this.description) &&
-                other.getCalories() == this.calories &&
-                other.isExcess() == this.excess;
+        return other.getCalories() == this.calories &&
+                other.isExcess() == this.excess &&
+                Objects.equals(other.getId(), this.id) &&
+                Objects.equals(other.getDateTime(), this.dateTime) &&
+                Objects.equals(other.getDescription(), this.description);
     }
 
     @Override
