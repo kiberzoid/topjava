@@ -29,6 +29,11 @@ public class ProfileRestController extends AbstractUserController {
         super.update(user, authUserId());
     }
 
+    @GetMapping(value = "/full", produces = MediaType.APPLICATION_JSON_VALUE)
+    public User getWithMeals() {
+        return super.getWithMeals(authUserId());
+    }
+
     @GetMapping(value = "/text")
     public String testUTF() {
         return "Русский текст";

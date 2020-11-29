@@ -32,4 +32,10 @@ public class UserTestData {
         updated.setRoles(Collections.singletonList(Role.ADMIN));
         return updated;
     }
+
+    public static User getDisabled() {
+        User updated = new User(user);
+        updated.setEnabled(false);
+        return updated;
+    }
 }

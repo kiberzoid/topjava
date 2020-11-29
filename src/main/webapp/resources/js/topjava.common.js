@@ -1,4 +1,5 @@
 var form;
+var filtered;
 
 function makeEditable() {
     form = $('#detailsForm');
@@ -22,7 +23,6 @@ function add() {
 }
 
 function deleteRow(id) {
-    console.log(ctx.ajaxUrl + id);
     $.ajax({
         url: ctx.ajaxUrl + id,
         type: "DELETE"
@@ -34,7 +34,6 @@ function deleteRow(id) {
 
 function updateTable() {
     $.get(ctx.ajaxUrl, function (data) {
-        console.log(data);
         ctx.datatableApi.clear().rows.add(data).draw();
     });
 }
@@ -46,7 +45,11 @@ function save() {
         data: form.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
-        updateTable();
+        if (filtered) {
+            filter();
+        } else {
+            updateTable();
+        }
         successNoty("Saved");
     });
 }

@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
+
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
@@ -33,6 +34,38 @@
 <%--    </form>--%>
 <%--</section>--%>
 <!-- new version -->
+<div class="container">
+    <form id="filterForm">
+        <div class="form-group">
+            <label for="startDate" class="col-form-label"><spring:message code="meal.startDate"/></label>
+            <input type="date" class="form-control" id="startDate" name="startDate"
+                   placeholder="<spring:message code="meal.startDate"/>">
+        </div>
+
+        <div class="form-group">
+            <label for="endDate" class="col-form-label"><spring:message code="meal.endDate"/></label>
+            <input type="date" class="form-control" id="endDate" name="endDate"
+                   placeholder="<spring:message code="meal.endDate"/>">
+        </div>
+
+        <div class="form-group">
+            <label for="startTime" class="col-form-label"><spring:message code="meal.startTime"/></label>
+            <input type="time" class="form-control" id="startTime" name="startTime"
+                   placeholder="<spring:message code="meal.startTime"/>">
+        </div>
+        <div class="form-group">
+            <label for="endTime" class="col-form-label"><spring:message code="meal.endTime"/></label>
+            <input type="time" class="form-control" id="endTime" name="endTime"
+                   placeholder="<spring:message code="meal.endTime"/>">
+        </div>
+    </form>
+    <button type="button" class="btn btn-secondary" onclick="releaseFilter()">
+        <spring:message code="meal.release"/>
+    </button>
+    <button type="button" class="btn btn-primary" onclick="filter()">
+        <spring:message code="meal.filter"/>
+    </button>
+</div>
 <div class="jumbotron pt-4">
     <div class="container">
         <h3 class="text-center"><spring:message code="meal.title"/></h3>

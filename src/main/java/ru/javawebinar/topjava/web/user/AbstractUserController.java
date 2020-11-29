@@ -27,6 +27,11 @@ public abstract class AbstractUserController {
         return service.get(id);
     }
 
+    public User getWithMeals(int id) {
+        log.info("get {} with meals", id);
+        return service.getWithMeals(id);
+    }
+
     public User create(User user) {
         log.info("create {}", user);
         checkNew(user);
@@ -47,5 +52,10 @@ public abstract class AbstractUserController {
     public User getByMail(String email) {
         log.info("getByEmail {}", email);
         return service.getByEmail(email);
+    }
+
+    public void changeEnabled(int id, boolean enabled) {
+        log.info("set enabled={} for user with id={}", enabled, id);
+        service.changeEnabled(id, enabled);
     }
 }

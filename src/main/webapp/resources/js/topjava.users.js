@@ -43,3 +43,19 @@ $(function () {
     };
     makeEditable();
 });
+
+function changeEnabled(id) {
+    var checked = ($("#checkbox" + id).prop("checked") === true);
+    $.ajax({
+        type: "POST",
+        url: ctx.ajaxUrl + "checked",
+        data: "id=" + id + "&enabled=" + checked
+    }).done(function () {
+        if (filtered) {
+            filter();
+        } else {
+            updateTable();
+        }
+        successNoty("Updated");
+    });
+}
