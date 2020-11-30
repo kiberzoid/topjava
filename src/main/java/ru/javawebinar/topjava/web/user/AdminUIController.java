@@ -38,8 +38,6 @@ public class AdminUIController extends AbstractUserController {
     @PostMapping("/checked")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void changeEnabled(@RequestParam int id, @RequestParam boolean enabled) {
-        log.info("id=" + id);
-        log.info("enabled=" + enabled);
         super.changeEnabled(id, enabled);
     }
 }

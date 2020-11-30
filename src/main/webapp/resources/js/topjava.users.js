@@ -44,18 +44,16 @@ $(function () {
     makeEditable();
 });
 
-function changeEnabled(id) {
-    var checked = ($("#checkbox" + id).prop("checked") === true);
+function changeEnabled(ch, id) {
+    var checked = ch.prop("checked");
+    console.log(checked);
     $.ajax({
         type: "POST",
         url: ctx.ajaxUrl + "checked",
         data: "id=" + id + "&enabled=" + checked
     }).done(function () {
-        if (filtered) {
-            filter();
-        } else {
-            updateTable();
-        }
-        successNoty("Updated");
+        ch.closest('tr').attr("data-userEnabled", checked);
+    }).fail(function () {
+        ch.prop("checked",!checked);
     });
 }

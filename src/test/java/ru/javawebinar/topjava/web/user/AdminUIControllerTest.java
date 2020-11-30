@@ -22,7 +22,7 @@ public class AdminUIControllerTest extends AbstractControllerTest {
     @Test
     void changeEnabled() throws Exception {
         User disabled = UserTestData.getDisabled();
-        perform(MockMvcRequestBuilders.put(REST_URL + "checked")
+        perform(MockMvcRequestBuilders.post(REST_URL + "checked")
                 .param("id", String.valueOf(USER_ID))
                 .param("enabled", "false"))
                 .andExpect(status().isNoContent());

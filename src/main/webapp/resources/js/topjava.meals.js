@@ -1,6 +1,16 @@
 var ctx;
 var filterForm;
 
+function filter(){
+    $.ajax({
+        type: "GET",
+        url: ctx.ajaxUrl + 'filter',
+        data: filterForm.serialize()
+    }).done(function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
+}
+
 $(function () {
     ctx = {
         ajaxUrl: "profile/meals/",
@@ -35,24 +45,10 @@ $(function () {
         })
     };
     filterForm = $('#filterForm');
-    makeEditable();
+    makeEditable(filter);
 });
-
-function filter(){
-    filtered = 'filtered';
-    $.ajax({
-        type: "GET",
-        url: ctx.ajaxUrl + 'filter',
-        data: filterForm.serialize()
-    }).done(function (data) {
-        console.log(data);
-        ctx.datatableApi.clear().rows.add(data).draw();
-        successNoty("Filtered");
-    });
-}
 
 function releaseFilter(){
     filterForm.trigger('reset');
-    filtered = undefined;
     updateTable();
 }

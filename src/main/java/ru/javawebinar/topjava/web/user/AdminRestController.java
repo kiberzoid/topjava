@@ -62,4 +62,10 @@ public class AdminRestController extends AbstractUserController {
     public User getByMail(@RequestParam String email) {
         return super.getByMail(email);
     }
+
+    @PostMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void changeEnabled(@PathVariable int id, @RequestParam boolean enabled) {
+        super.changeEnabled(id, enabled);
+    }
 }
