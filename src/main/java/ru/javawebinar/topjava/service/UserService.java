@@ -58,7 +58,7 @@ public class UserService {
     public void changeEnabled(int id, boolean enabled) {
         User user = get(id);
         user.setEnabled(enabled);
-        update(user);
+        checkNotFoundWithId(repository.save(user), id);
     }
 
     public User getWithMeals(int id) {

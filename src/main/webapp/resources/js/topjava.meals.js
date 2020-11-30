@@ -1,13 +1,17 @@
 var ctx;
 var filterForm;
 
+function fill_table(data){
+    ctx.datatableApi.clear().rows.add(data).draw();
+}
+
 function filter(){
     $.ajax({
         type: "GET",
         url: ctx.ajaxUrl + 'filter',
         data: filterForm.serialize()
     }).done(function (data) {
-        ctx.datatableApi.clear().rows.add(data).draw();
+        fill_table(data);
     });
 }
 

@@ -29,7 +29,7 @@ public class ProfileRestController extends AbstractUserController {
         super.update(user, authUserId());
     }
 
-    @GetMapping(value = "/full", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/with-meals", produces = MediaType.APPLICATION_JSON_VALUE)
     public User getWithMeals() {
         return super.getWithMeals(authUserId());
     }

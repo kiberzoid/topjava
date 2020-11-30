@@ -44,15 +44,16 @@ $(function () {
     makeEditable();
 });
 
-function changeEnabled(ch, id) {
+function changeEnabled(ch, userId) {
     var checked = ch.prop("checked");
     console.log(checked);
     $.ajax({
         type: "POST",
         url: ctx.ajaxUrl + "checked",
-        data: "id=" + id + "&enabled=" + checked
+        data: {'id': userId, 'enabled': checked},
     }).done(function () {
         ch.closest('tr').attr("data-userEnabled", checked);
+        checked ? successNoty("Enabled") : successNoty("Disabled");
     }).fail(function () {
         ch.prop("checked",!checked);
     });

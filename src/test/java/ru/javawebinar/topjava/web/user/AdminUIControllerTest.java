@@ -28,6 +28,13 @@ public class AdminUIControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
 
         USER_MATCHER.assertMatch(userService.get(USER_ID), disabled);
+
+        perform(MockMvcRequestBuilders.post(REST_URL + "checked")
+                .param("id", String.valueOf(USER_ID))
+                .param("enabled", "true"))
+                .andExpect(status().isNoContent());
+
+        USER_MATCHER.assertMatch(userService.get(USER_ID), UserTestData.user);
     }
 
 }

@@ -29,7 +29,7 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @Override
-    @GetMapping("/{id}/full")
+    @GetMapping("/{id}/with-meals")
     public User getWithMeals(@PathVariable int id) {
         return super.getWithMeals(id);
     }
@@ -63,7 +63,8 @@ public class AdminRestController extends AbstractUserController {
         return super.getByMail(email);
     }
 
-    @PostMapping("/{id}")
+    @Override
+    @PatchMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void changeEnabled(@PathVariable int id, @RequestParam boolean enabled) {
         super.changeEnabled(id, enabled);

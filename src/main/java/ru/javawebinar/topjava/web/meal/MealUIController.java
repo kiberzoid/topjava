@@ -23,6 +23,7 @@ public class MealUIController extends AbstractMealController {
         return super.getAll();
     }
 
+    @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -37,7 +38,7 @@ public class MealUIController extends AbstractMealController {
         super.create(new Meal(dateTime, description, calories));
     }
 
-    @GetMapping(value = "/filter")
+    @GetMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<MealTo> getBetween(
             @RequestParam @Nullable LocalDate startDate,
             @RequestParam @Nullable LocalDate endDate,

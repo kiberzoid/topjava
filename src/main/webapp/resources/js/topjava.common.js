@@ -20,7 +20,7 @@ function makeEditable(updateT = null) {
     if(!updateTable){
         updateTable = function (){
             $.get(ctx.ajaxUrl, function (data) {
-                ctx.datatableApi.clear().rows.add(data).draw();
+                fill_table(data);
             });
         }
     }
