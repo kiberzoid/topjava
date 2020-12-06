@@ -62,3 +62,17 @@ $(function () {
     };
     makeEditable();
 });
+
+$('.datePicker').datetimepicker({
+    timepicker:false,
+    format:'Y-m-d'
+});
+
+$('.timePicker').datetimepicker({
+    datepicker:false,
+    format:'H:i'
+})
+
+$('#dateTime').datetimepicker({
+    format:'Y-m-d H:i'
+})
