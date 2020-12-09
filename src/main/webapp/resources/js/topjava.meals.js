@@ -27,7 +27,9 @@ $(function () {
                 {
                     "data": "dateTime",
                     "render": function(data, type, row){
-                        data = data.replace('T', ' ').substr(0, 16);
+                        if (type === "display") {
+                            return data.replace('T', ' ').substr(0, 16);
+                        }
                         return data;
                     }
                 },
@@ -63,15 +65,52 @@ $(function () {
     makeEditable();
 });
 
-$('.datePicker').datetimepicker({
+var startDate = $('#startDate');
+var endDate = $('#endDate');
+var startTime = $('#startTime');
+var endTime = $('#endTime');
+
+startDate.datetimepicker({
     timepicker:false,
-    format:'Y-m-d'
+    format:'Y-m-d',
+    onShow : function (){
+        this.setOptions({
+            maxDate: endDate.val() ? endDate.val() : false
+        });
+        console.log(this.maxDate);
+    }
 });
 
-$('.timePicker').datetimepicker({
+endDate.datetimepicker({
+    timepicker:false,
+    format:'Y-m-d',
+    onShow : function (){
+        this.setOptions({
+            minDate: startDate.val() ? startDate.val() : false
+        });
+        console.log(this.minDate);
+    }
+});
+
+startTime.datetimepicker({
     datepicker:false,
-    format:'H:i'
-})
+    format:'H:i',
+    onShow : function (){
+        this.setOptions({
+            maxTime: endTime.val() ? endTime.val() : false
+        })
+    }
+});
+
+endTime.datetimepicker({
+    datepicker:false,
+    format:'H:i',
+    onShow : function (){
+        this.setOptions({
+            minTime: startTime.val() ? startTime.val() : false
+        })
+    }
+});
 
 $('#dateTime').datetimepicker({
     format:'Y-m-d H:i'

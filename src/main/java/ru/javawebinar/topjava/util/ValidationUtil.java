@@ -77,7 +77,7 @@ public class ValidationUtil {
         return result;
     }
 
-    public static ResponseEntity<String> checkBindingResult(BindingResult result) {
+    public static ResponseEntity<String> unprocessableEntityResponse(BindingResult result) {
         String errorFieldsMsg = result.getFieldErrors().stream()
                 .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.joining("<br>"));

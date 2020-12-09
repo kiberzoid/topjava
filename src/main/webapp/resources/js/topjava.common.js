@@ -47,12 +47,15 @@ function updateTableByData(data) {
 }
 
 function save() {
-    var dtForm = $('#dateTime');
-    dtForm.val( dtForm.val().replace(' ', 'T'));
+    var cloneForm = form.clone();
+    var dt = cloneForm.find("#dateTime");
+    if(dt.val()){
+        dt.val( dt.val().replace(' ', 'T'));
+    }
     $.ajax({
         type: "POST",
         url: ctx.ajaxUrl,
-        data: form.serialize()
+        data: cloneForm.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
         ctx.updateTable();
