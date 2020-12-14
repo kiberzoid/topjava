@@ -38,7 +38,7 @@ public class MealTestData {
         return new Meal(MEAL1_ID, meal1.getDateTime().plus(2, ChronoUnit.MINUTES), "Обновленный завтрак", 200);
     }
 
-    public static Meal getBad() {
+    public static Meal getInvalid() {
         return new Meal(MEAL1_ID, null, "", 200);
     }
 }

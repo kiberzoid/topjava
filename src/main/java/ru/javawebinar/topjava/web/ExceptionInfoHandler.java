@@ -20,7 +20,6 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
@@ -29,8 +28,9 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class ExceptionInfoHandler {
     private static Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
+    public static final String DUPLICATE_USER_EMAIL = "User with this email already exists";
+    public static final String DUPLICATE_MEAL_DATETIME = "Meal with this dateTime already exists";
 
-    //  http://stackoverflow.com/a/22358422/548473
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(NotFoundException.class)
     public ErrorInfo handleError(HttpServletRequest req, NotFoundException e) {
@@ -43,10 +43,10 @@ public class ExceptionInfoHandler {
         Throwable rootCause = ValidationUtil.getRootCause(e);
         String message = rootCause.getMessage();
         String errDescription = null;
-        if(message.contains("users_unique_email_idx")){
-            errDescription = "User with this email already exists";
-        }else if(message.contains("meals_unique_user_datetime_idx")){
-            errDescription = "Meal with this dateTime already exists";
+        if (message.contains("users_unique_email_idx")) {
+            errDescription = DUPLICATE_USER_EMAIL;
+        } else if (message.contains("meals_unique_user_datetime_idx")) {
+            errDescription = DUPLICATE_MEAL_DATETIME;
         }
         return logAndGetErrorInfo(req, e, rootCause, true, DATA_ERROR, errDescription);
     }
@@ -63,7 +63,7 @@ public class ExceptionInfoHandler {
         String errDescription = e.getBindingResult().getFieldErrors().stream()
                 .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.joining("<br>"));
-        return logAndGetErrorInfo(req, e, ValidationUtil.getRootCause(e),false, VALIDATION_ERROR, errDescription);
+        return logAndGetErrorInfo(req, e, ValidationUtil.getRootCause(e), false, VALIDATION_ERROR, errDescription);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -73,13 +73,13 @@ public class ExceptionInfoHandler {
     }
 
     private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException,
-                                         ErrorType errorType){
+                                         ErrorType errorType) {
         return logAndGetErrorInfo(req, e, ValidationUtil.getRootCause(e), logException, errorType, null);
     }
 
     private ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, Throwable rootCause,
                                          boolean logException, ErrorType errorType, String errDescription) {
-        if(errDescription == null){
+        if (errDescription == null) {
             errDescription = rootCause.toString();
         }
         if (logException) {

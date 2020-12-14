@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.exception.ErrorType;
@@ -23,6 +25,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 import static ru.javawebinar.topjava.UserTestData.user;
 import static ru.javawebinar.topjava.util.MealsUtil.createTo;
 import static ru.javawebinar.topjava.util.MealsUtil.getTos;
+import static ru.javawebinar.topjava.web.ExceptionInfoHandler.DUPLICATE_MEAL_DATETIME;
 
 class MealRestControllerTest extends AbstractControllerTest {
 
@@ -126,8 +129,8 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void updateInvalidRequestBody() throws Exception{
-        Meal updated = getBad();
+    void updateInvalidRequestBody() throws Exception {
+        Meal updated = getInvalid();
         perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated))
@@ -138,11 +141,37 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void createInvalidRequestBody() throws Exception {
-        Meal newMeal = getBad();
+        Meal newMeal = getInvalid();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newMeal))
                 .with(userHttpBasic(user)))
                 .andExpect(errorInfo(REST_URL, ErrorType.VALIDATION_ERROR));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void updateDuplicateDateTime() throws Exception {
+        Meal updated = getUpdated();
+        updated.setDateTime(meal2.getDateTime());
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated))
+                .with(userHttpBasic(user)))
+                .andExpect(status().isConflict())
+                .andExpect(errorInfo(REST_URL + MEAL1_ID, ErrorType.DATA_ERROR, DUPLICATE_MEAL_DATETIME));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createDuplicateDateTime() throws Exception {
+        Meal newMeal = getNew();
+        newMeal.setDateTime(meal2.getDateTime());
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newMeal))
+                .with(userHttpBasic(user)))
+                .andExpect(status().isConflict())
+                .andExpect(errorInfo(REST_URL, ErrorType.DATA_ERROR, DUPLICATE_MEAL_DATETIME));
     }
 }
